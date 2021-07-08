@@ -139,8 +139,8 @@ void PrintPreviewForm::OnPaint() {
 	hbmp = ::CreateCompatibleBitmap(paintDC, printRect.right, printRect.bottom);
 	oldBMP = (HBITMAP)tempDC.SelectObject(hbmp);
 
-	fillRect.right = printRect.right + printRect.left;
-	fillRect.bottom = printRect.bottom + printRect.top;
+	fillRect.right = printRect.right + printRect.left + 100;
+	fillRect.bottom = printRect.bottom + printRect.top + 200;
 
 	tempDC.SetMapMode(MM_ANISOTROPIC);
 	tempDC.SetWindowExt(12, 12);
@@ -183,7 +183,7 @@ void PrintPreviewForm::OnPaint() {
 	pageLineCount = this->notepadForm->printer->GetPageLineCount();
 
 	i = (this->m_nCurrentPage - 1) * pageLineCount;
-	totalHeight = writeRect.top + metric.tmHeight;
+	totalHeight = writeRect.top;
 	tempDC.DrawText(header, &headerRect, DT_CENTER | DT_SINGLELINE | DT_BOTTOM);
 	tempDC.DrawText(footer, &footerRect, DT_CENTER | DT_SINGLELINE | DT_TOP);
 	while (i < note->GetLength() && current < pageLineCount && totalHeight <= writeRect.bottom) {

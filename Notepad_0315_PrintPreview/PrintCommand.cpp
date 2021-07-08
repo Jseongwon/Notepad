@@ -118,7 +118,7 @@ void PrintCommand::Execute() {
 		while (i < note->GetLength()) {
 			cdc->StartPage();
 			current = 0;
-			totalHeight = writeRect.top + metric.tmHeight;
+			totalHeight = writeRect.top;
 			cdc->DrawText(header, &headerRect, DT_CENTER | DT_SINGLELINE | DT_BOTTOM);
 			cdc->DrawText(footer, &footerRect, DT_CENTER | DT_SINGLELINE | DT_TOP);
 			while (i < note->GetLength() && current < pageLineCount && totalHeight <= writeRect.bottom) {
