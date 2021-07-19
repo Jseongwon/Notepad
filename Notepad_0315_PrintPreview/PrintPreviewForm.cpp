@@ -97,7 +97,7 @@ void PrintPreviewForm::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	else if (nChar == VK_DOWN) {
 		this->previewToolBar->SendMessage(WM_COMMAND, IDC_BUTTON_LAST);
 	}
-	else if (nChar == 'C' || nChar == 'c') {
+	else if ((nChar == 'C' || nChar == 'c') || nChar == VK_ESCAPE) {
 		this->previewToolBar->SendMessage(WM_COMMAND, IDC_BUTTON_CLOSE);
 	}
 }
@@ -117,7 +117,7 @@ void PrintPreviewForm::OnPaint() {
 	CPen shadowPen;
 
 	CRect screenRect;
-	CRect printRect = this->notepadForm->printer->GetPrintPageRect();
+	CRect printRect(0, 0, m_dcPrint->GetDeviceCaps(HORZRES), m_dcPrint->GetDeviceCaps(VERTRES));// = this->notepadForm->printer->GetPrintPageRect();
 	CRect fillRect;
 	CRect imageRect;
 
@@ -139,8 +139,8 @@ void PrintPreviewForm::OnPaint() {
 	hbmp = ::CreateCompatibleBitmap(paintDC, printRect.right, printRect.bottom);
 	oldBMP = (HBITMAP)tempDC.SelectObject(hbmp);
 
-	fillRect.right = printRect.right + printRect.left + 100;
-	fillRect.bottom = printRect.bottom + printRect.top + 200;
+	fillRect.right = printRect.right;// +printRect.left;// +100;
+	fillRect.bottom = printRect.bottom;// +printRect.top + this->previewToolBar->size.cy + 5;// +200;
 
 	tempDC.SetMapMode(MM_ANISOTROPIC);
 	tempDC.SetWindowExt(12, 12);
@@ -194,30 +194,19 @@ void PrintPreviewForm::OnPaint() {
 		totalHeight += metric.tmHeight;
 		i++;
 	}
+	// 열었을 때의 크기를 적어두고 페인트할 때 현재의 크기로 비율을 구한 뒤 곱해준다.
+	// ratioX = OriginWidth() / rect.Width()
+	// ratioY = OriginHeight() / rect.Height();
+	Long rateWidth = 8;
+	Long rateHeight = 11;
 
-	int nNum;
-	int nDen;
-
-	// 수직 치수를 기준으로 비율을 사용할 것인지 확인
-	if (printRect.Width() < printRect.Height()) {
-		nNum = screenRect.Height();
-		nDen = printRect.Height();
-
-		// 너비와 높이를 비율로 구하고, 가운데 이동을 너비 높이로 이동시켜준다.
-		imageRect.right = screenRect.right / 2;
-		imageRect.bottom = MulDiv(screenRect.bottom, nNum, nDen);
-
-		imageRect.SetRect(screenRect.CenterPoint().x - imageRect.Width() / 2, this->previewToolBar->size.cy + 5,
-			screenRect.CenterPoint().x + imageRect.Width() / 2, screenRect.bottom - 5);
+	if (printRect.Width() > printRect.Height()) {
+		rateWidth = 5;
+		rateHeight = 8;
 	}
-	else {
-		// 너비와 높이를 비율로 구하고, 가운데 이동을 너비 높이로 이동시켜준다.
-		imageRect.right = screenRect.right - 10;
-		imageRect.bottom = screenRect.bottom;
 
-		imageRect.SetRect(screenRect.CenterPoint().x - imageRect.Width() / 2, screenRect.CenterPoint().y - imageRect.Height() / 2 + this->previewToolBar->size.cy + 5,
-			screenRect.CenterPoint().x + imageRect.Width() / 2, screenRect.CenterPoint().y + imageRect.Height() / 2 - 5);
-	}
+	Long startXPos = screenRect.CenterPoint().x - fillRect.Width() / rateWidth / 2;
+	Long startYPos = (screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2;// +this->previewToolBar->size.cy;
 
 	paintDC.SelectStockObject(HOLLOW_BRUSH);
 	paintDC.SelectObject(&rectPen);
@@ -227,8 +216,11 @@ void PrintPreviewForm::OnPaint() {
 
 	paintDC.FillRect(&screenRect, CBrush::FromHandle((HBRUSH)GetStockObject(GRAY_BRUSH)));
 
-	paintDC.StretchBlt(imageRect.left, imageRect.top, imageRect.Width(), imageRect.Height(), &tempDC,
-		0, 0, fillRect.Width(), fillRect.Height(), SRCCOPY);
+	paintDC.SetStretchBltMode(HALFTONE); // 가로모드 너비 5 높이 8
+	paintDC.StretchBlt(startXPos, startYPos, fillRect.Width() / rateWidth, fillRect.Height() / rateHeight, &tempDC,
+		fillRect.left, fillRect.top, fillRect.Width(), fillRect.Height(), SRCCOPY);
+	//paintDC.StretchBlt(imageRect.left, imageRect.top, imageRect.Width(), imageRect.Height(), &tempDC,
+	//	0, 0, fillRect.Width(), fillRect.Height(), SRCCOPY);
 
 	SelectObject(tempDC, oldFont);
 	DeleteObject(hFont);

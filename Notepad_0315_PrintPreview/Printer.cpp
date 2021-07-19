@@ -42,6 +42,24 @@ Printer::~Printer() {
 	}
 }
 
+bool Printer::Prepare(CWnd *pParentWnd, CDC* dc) {
+	CSize printSize;
+
+	CDC *printerDC = CDC::FromHandle(this->printerDC);
+
+	HFONT hFont;
+	HFONT oldFont;
+
+	string str;
+	const char(*text);
+
+	// 1. 인쇄 용지 크기를 구한다.
+	printSize.cx = printerDC->GetDeviceCaps(PHYSICALWIDTH);
+	printSize.cy = printerDC->GetDeviceCaps(PHYSICALHEIGHT);
+
+	return true;
+}
+
 void Printer::Prepare(CWnd *pParentWnd) {
 	CRect printRect;
 	CRect previewRect;

@@ -12,6 +12,7 @@ class Printer {
 public:
 	Printer(NotepadForm *notepadForm = 0);
 	~Printer();
+	bool Prepare(CWnd *pParentWnd, CDC* dc);
 	void Prepare(CWnd *pParentWnd);
 	Glyph* GetPrintNote() const;
 	CRect GetPrintPageRect();
