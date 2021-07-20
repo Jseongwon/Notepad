@@ -16,6 +16,10 @@ public:
 	LONG m_nCurrentPage;
 	LONG m_nPages;
 
+	CRect m_cRect;
+	double m_dWidthRate;
+	double m_dHeightRate;
+
 public:
 	PrintPreviewForm(NotepadForm *notepadForm = NULL, BOOL onIsNotepadOrWordMode = TRUE, BOOL onIsWordWrap = FALSE);
 	BOOL PreCreateWindow(CREATESTRUCT& cs);

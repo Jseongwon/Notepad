@@ -50,16 +50,17 @@ int PrintPreviewForm::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	this->m_nCurrentPage = 1;
 
 	Glyph *note = this->notepadForm->printer->GetPrintNote();
-	CRect clientRect;
 
 	this->m_nPages = note->GetLength() / this->notepadForm->printer->GetPageLineCount() + 1;
 
-	this->GetClientRect(&clientRect);
+	this->GetClientRect(&this->m_cRect);
+	this->m_dHeightRate = 1.0;
+	this->m_dWidthRate = 1.0;
 
 	this->previewToolBar = new PreviewToolBar(this);
 	this->previewToolBar->Create(PreviewToolBar::IDD, this);
 	this->previewToolBar->ShowWindow(SW_SHOW);
-	this->previewToolBar->SetWindowPos(NULL, 0, 0, clientRect.right, this->previewToolBar->size.cy, SWP_DRAWFRAME);
+	this->previewToolBar->SetWindowPos(NULL, 0, 0, this->m_cRect.right, this->previewToolBar->size.cy, SWP_DRAWFRAME);
 
 	this->SetFocus();
 
@@ -72,6 +73,9 @@ void PrintPreviewForm::OnSize(UINT nType, int cx, int cy) {
 	CFrameWnd::OnSize(nType, cx, cy);
 	CRect clientRect;
 	this->GetClientRect(&clientRect);
+
+	this->m_dWidthRate = this->m_cRect.Width() / clientRect.Width();
+	this->m_dHeightRate = this->m_cRect.Height() / clientRect.Width();
 
 	this->previewToolBar->SetWindowPos(NULL, 0, 0, clientRect.right, this->previewToolBar->size.cy, SWP_DRAWFRAME);
 
@@ -117,9 +121,8 @@ void PrintPreviewForm::OnPaint() {
 	CPen shadowPen;
 
 	CRect screenRect;
-	CRect printRect(0, 0, m_dcPrint->GetDeviceCaps(HORZRES), m_dcPrint->GetDeviceCaps(VERTRES));// = this->notepadForm->printer->GetPrintPageRect();
+	CRect printRect = this->notepadForm->printer->GetPrintPageRect();
 	CRect fillRect;
-	CRect imageRect;
 
 	LOGFONT printLogFont = this->notepadForm->printer->GetPrintLogFont();
 
@@ -139,20 +142,15 @@ void PrintPreviewForm::OnPaint() {
 	hbmp = ::CreateCompatibleBitmap(paintDC, printRect.right, printRect.bottom);
 	oldBMP = (HBITMAP)tempDC.SelectObject(hbmp);
 
-	fillRect.right = printRect.right;// +printRect.left;// +100;
-	fillRect.bottom = printRect.bottom;// +printRect.top + this->previewToolBar->size.cy + 5;// +200;
+	fillRect.right = printRect.right;
+	fillRect.bottom = printRect.bottom;
 
 	tempDC.SetMapMode(MM_ANISOTROPIC);
 	tempDC.SetWindowExt(12, 12);
 	tempDC.SetViewportExt(5, 5);
-	//tempDC.SetWindowExt(fillRect.Width(), fillRect.Height());
-	//tempDC.SetViewportExt(fillRect.Width(), fillRect.Height());
 	// SWE 12, 12 , SVE 5, 5를 설정하면 600dpi의 100% 화면으로 볼 수 있다.
 
 	tempDC.FillRect(&fillRect, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
-
-	rectPen.CreatePen(PS_SOLID, 2, GetSysColor(COLOR_WINDOWFRAME));
-	shadowPen.CreatePen(PS_SOLID, 3, GetSysColor(COLOR_BTNSHADOW)); // 그림자를 줌.
 
 	printLogFont.lfWeight = FW_THIN;
 	hFont = CreateFontIndirect(&printLogFont);
@@ -197,16 +195,11 @@ void PrintPreviewForm::OnPaint() {
 	// 열었을 때의 크기를 적어두고 페인트할 때 현재의 크기로 비율을 구한 뒤 곱해준다.
 	// ratioX = OriginWidth() / rect.Width()
 	// ratioY = OriginHeight() / rect.Height();
-	Long rateWidth = 8;
-	Long rateHeight = 11;
+	double rateWidth = m_dcPrint->GetDeviceCaps(HORZSIZE) / 25.4;
+	double rateHeight = m_dcPrint->GetDeviceCaps(VERTSIZE) / 25.4;
 
-	if (printRect.Width() > printRect.Height()) {
-		rateWidth = 5;
-		rateHeight = 8;
-	}
-
-	Long startXPos = screenRect.CenterPoint().x - fillRect.Width() / rateWidth / 2;
-	Long startYPos = (screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2;// +this->previewToolBar->size.cy;
+	Long startXPos = (Long)(screenRect.CenterPoint().x - fillRect.Width() / rateWidth / 2);
+	Long startYPos = (Long)((screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2);// +this->previewToolBar->size.cy;
 
 	paintDC.SelectStockObject(HOLLOW_BRUSH);
 	paintDC.SelectObject(&rectPen);
@@ -219,8 +212,9 @@ void PrintPreviewForm::OnPaint() {
 	paintDC.SetStretchBltMode(HALFTONE); // 가로모드 너비 5 높이 8
 	paintDC.StretchBlt(startXPos, startYPos, fillRect.Width() / rateWidth, fillRect.Height() / rateHeight, &tempDC,
 		fillRect.left, fillRect.top, fillRect.Width(), fillRect.Height(), SRCCOPY);
-	//paintDC.StretchBlt(imageRect.left, imageRect.top, imageRect.Width(), imageRect.Height(), &tempDC,
-	//	0, 0, fillRect.Width(), fillRect.Height(), SRCCOPY);
+
+	rectPen.CreatePen(PS_SOLID, 2, GetSysColor(COLOR_WINDOWFRAME));
+	shadowPen.CreatePen(PS_SOLID, 3, GetSysColor(COLOR_BTNSHADOW)); // 그림자를 줌.
 
 	SelectObject(tempDC, oldFont);
 	DeleteObject(hFont);

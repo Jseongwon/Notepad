@@ -154,9 +154,9 @@ void Printer::Prepare(CWnd *pParentWnd) {
 	rowCount = printRect.Height() / metric.tmHeight;
 	columnCount = (LONG)floor(printRect.Width() / aveCharWidth * 1.0 + 0.5);
 
-	printRect.SetRect(0, 0, columnCount * aveCharWidth, rowCount * metric.tmHeight);
-	printRect.SetRect(printSize.cx / 2 - printRect.Width() / 2, printSize.cy / 2 - printRect.Height() / 2,
-		printSize.cx / 2 + printRect.Width() / 2, printSize.cy / 2 + printRect.Height() / 2);
+	printRect.SetRect(0, 0, printSize.cx, printSize.cy);
+	printRect.SetRect(printRect.CenterPoint().x - printSize.cx / 2, printRect.CenterPoint().y - printSize.cy / 2,
+		printRect.CenterPoint().x + printSize.cx / 2, printRect.CenterPoint().y + printSize.cy / 2);
 
 	// 4. 여백을 구한다.
 	rate = (LONG)floor(printSize.cy / paperHeight * 1.0 + 0.5);
