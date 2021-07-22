@@ -210,7 +210,7 @@ void PrintPreviewForm::OnPaint() {
 	paintDC.FillRect(&screenRect, CBrush::FromHandle((HBRUSH)GetStockObject(GRAY_BRUSH)));
 
 	paintDC.SetStretchBltMode(HALFTONE); // 가로모드 너비 5 높이 8
-	paintDC.StretchBlt(startXPos, startYPos, fillRect.Width() / rateWidth, fillRect.Height() / rateHeight, &tempDC,
+	paintDC.StretchBlt(startXPos, startYPos, (Long)(fillRect.Width() / rateWidth), (Long)(fillRect.Height() / rateHeight), &tempDC,
 		fillRect.left, fillRect.top, fillRect.Width(), fillRect.Height(), SRCCOPY);
 
 	rectPen.CreatePen(PS_SOLID, 2, GetSysColor(COLOR_WINDOWFRAME));
