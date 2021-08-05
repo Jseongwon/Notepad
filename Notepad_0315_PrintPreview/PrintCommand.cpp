@@ -63,6 +63,7 @@ void PrintCommand::Execute() {
 		if (orientation != 1) {//가로모드로 설정이 되어있으면
 			DEVMODE *pDevMode = dlg.GetDevMode();
 			pDevMode->dmOrientation = DMORIENT_LANDSCAPE;
+			pDevMode->dmPaperSize = DMPAPER_TABLOID_EXTRA;
 			cdc->ResetDCA(pDevMode);
 		}
 

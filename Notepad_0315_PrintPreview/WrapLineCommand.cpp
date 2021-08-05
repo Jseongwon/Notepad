@@ -60,6 +60,11 @@ void WrapLineCommand::Execute() {
 			line->Split(dummyLine, current);
 			this->notepadForm->note->Add(i + 1, dummyLine);
 		}
+		else if (current == 0) {
+			dummyLine = glyphFactory.Create((char*)"\n", false);
+			line->Split(dummyLine, 1);
+			this->notepadForm->note->Add(i + 1, dummyLine);
+		}
 		onIsFirst = false;
 		i++;
 	}

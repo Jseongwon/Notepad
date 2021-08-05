@@ -107,7 +107,7 @@ void ScrollController::Update() {
 	}
 
 	//6. 수평스크롤바가 생기면(가로스크롤의 최대 길이가 페이지의 가로길이보다 크면)
-	if (horizontalMax > horizontalPage) {
+	if (horizontalMax > horizontalPage && this->notepadForm->onIsLineWrapping != TRUE) {
 		//6.1 수평스크롤바의 플래그를 설정한다.
 		this->notepadForm->onIsHorizontalScrollBar = TRUE;
 		//6.1. 페이지의 세로길이에서 박스의 길이를 뺀다.
@@ -121,7 +121,8 @@ void ScrollController::Update() {
 		horizontalPage -= box;
 	}
 	// 8. 수평 스크롤바가 생기면(한번 더 확인) (2021.01.13)
-	if (horizontalMax > horizontalPage && this->notepadForm->onIsHorizontalScrollBar != TRUE) {
+	if (horizontalMax > horizontalPage && this->notepadForm->onIsHorizontalScrollBar != TRUE &&
+		this->notepadForm->onIsLineWrapping != TRUE) {
 		//6.1 수평스크롤바의 플래그를 설정한다.
 		this->notepadForm->onIsHorizontalScrollBar = TRUE;
 		//6.1. 페이지의 세로길이에서 박스의 길이를 뺀다.

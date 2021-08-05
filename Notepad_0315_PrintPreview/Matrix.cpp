@@ -522,7 +522,12 @@ bool Matrix::GetOnIsGreaterThanScreen() {// (2020.01.22)
 			}
 			if (width > rect.right) {
 				count++;
-				j = k - 2;
+				if (j != k - 1) {
+					j = k - 2;
+				}
+				else {
+					j = k - 1;
+				}
 			}
 			j++;
 		}

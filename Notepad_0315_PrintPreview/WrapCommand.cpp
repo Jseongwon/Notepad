@@ -35,7 +35,7 @@ void WrapCommand::Execute() {
 
 	bool onIsGreaterThanScreen;
 	// 1. 잘리는 줄의 개수를 구한다.(2020.01.22)
-	onIsGreaterThanScreen = this->notepadForm->matrix->GetOnIsGreaterThanScreen();
+	onIsGreaterThanScreen = this->notepadForm->matrix->GetOnIsGreaterThanScreen();// 한글자가 화면의 크기를 넘어설때 문제가 발생한다.
 
 	// 2. 잘리는 줄의 개수가 화면 크기보다 많으면 수직 스크롤바가 있는 것으로 지정한다.(2020.01.22)
 	if (onIsGreaterThanScreen == true) {
@@ -71,6 +71,11 @@ void WrapCommand::Execute() {
 		if (current > 0) {
 			dummyLine = glyphFactory.Create((char*)"\n", false);
 			line->Split(dummyLine, current);
+			this->notepadForm->note->Add(i + 1, dummyLine);
+		}
+		else if (current == 0) {
+			dummyLine = glyphFactory.Create((char*)"\n", false);
+			line->Split(dummyLine, 1);
 			this->notepadForm->note->Add(i + 1, dummyLine);
 		}
 		i++;
