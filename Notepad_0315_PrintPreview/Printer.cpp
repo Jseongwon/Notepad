@@ -138,10 +138,7 @@ void Printer::Prepare(CWnd *pParentWnd) {
 	paperHeight = printerDC->GetDeviceCaps(VERTSIZE);
 
 	// 2. 인쇄 화면의 폰트를 구한다.
-	notepadFont = this->notepadForm->font->GetLogFont();
-
-	printLogFont = notepadFont;
-	printLogFont.lfHeight = -MulDiv(pointSize, printerDC->GetDeviceCaps(LOGPIXELSY), 72);
+	printLogFont = this->notepadForm->font->FindPrintingLogFont(printerDC);
 
 	// 3. 인쇄 화면의 줄 개수와 열 개수를 구한다.
 	hFont = CreateFontIndirect(&printLogFont);
@@ -176,7 +173,7 @@ void Printer::Prepare(CWnd *pParentWnd) {
 	DeleteObject(hFont);
 
 	// 6. 미리보기 화면의 폰트를 구한다.
-	previewLogFont = notepadFont;
+	previewLogFont = printLogFont;
 	previewLogFont.lfHeight = -MulDiv(pointSize, ppi, 72);
 
 	hFont = CreateFontIndirect(&previewLogFont);

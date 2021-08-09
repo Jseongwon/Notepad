@@ -9,11 +9,12 @@ public:
 	Font(LOGFONT logFont, COLORREF color, LONG pointSize);
 	Font(const Font& source);
 	~Font();
+	Font& operator =(const Font& source);
 	LOGFONT GetLogFont() const;
 	COLORREF GetColorRef() const;
 	LONG GetPointSize() const;
 	LONG GetPixel() const;
-	Font& operator =(const Font& source);
+	LOGFONT FindPrintingLogFont(CDC* printerDC);
 
 private:
 	LOGFONT logFont;

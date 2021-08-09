@@ -152,7 +152,6 @@ void PrintPreviewForm::OnPaint() {
 
 	tempDC.FillRect(&fillRect, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
 
-	printLogFont.lfWeight = FW_THIN;
 	hFont = CreateFontIndirect(&printLogFont);
 	oldFont = (HFONT)tempDC.SelectObject(hFont);
 

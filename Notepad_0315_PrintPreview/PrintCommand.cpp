@@ -81,6 +81,7 @@ void PrintCommand::Execute() {
 		di.lpszDocName = (LPCTSTR)fileTitle;
 
 		//폰트 적용
+		//logFont = this->notepadForm->font->FindPrintingLogFont(cdc);
 		logFont = this->notepadForm->printer->GetPrintLogFont();
 		font.CreateFontIndirectA(&logFont);
 		TEXTMETRIC metric;
