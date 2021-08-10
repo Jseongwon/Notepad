@@ -93,12 +93,14 @@ void PrintCommand::Execute() {
 		footer = AfxGetApp()->GetProfileString("NotepadSection", "Footer", "");
 
 		CRect writeRect = this->notepadForm->printer->GetPrintWriteRect();
-
+		pageLineCount = this->notepadForm->printer->GetPageLineCount();
 		if (header.Compare("") != 0) {
 			writeRect.top += (metric.tmHeight);
+			pageLineCount--;
 		}
 		if (footer.Compare("") != 0) {
 			writeRect.bottom -= (metric.tmHeight);
+			pageLineCount--;
 		}
 
 		CRect headerRect(0, 0, printRect.Width(), printRect.Height() + (metric.tmHeight));
@@ -114,7 +116,6 @@ void PrintCommand::Execute() {
 		BOOL bPrintingOK = cdc->StartDoc(&di);
 
 		// 페이지를 인쇄하는 루프
-		pageLineCount = this->notepadForm->printer->GetPageLineCount();
 		note = this->notepadForm->printer->GetPrintNote();
 		i = 0;
 		while (i < note->GetLength()) {

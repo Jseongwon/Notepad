@@ -138,16 +138,12 @@ void PrintPreviewForm::OnPaint() {
 	this->GetClientRect(&screenRect);
 
 	tempDC.CreateCompatibleDC(&paintDC);
-
 	hbmp = ::CreateCompatibleBitmap(paintDC, printRect.right, printRect.bottom);
 	oldBMP = (HBITMAP)tempDC.SelectObject(hbmp);
 
 	fillRect.right = printRect.right;
 	fillRect.bottom = printRect.bottom;
 
-	tempDC.SetMapMode(MM_ANISOTROPIC);
-	tempDC.SetWindowExt(12, 12);
-	tempDC.SetViewportExt(5, 5);
 	// SWE 12, 12 , SVE 5, 5를 설정하면 600dpi의 100% 화면으로 볼 수 있다.
 
 	tempDC.FillRect(&fillRect, CBrush::FromHandle((HBRUSH)GetStockObject(WHITE_BRUSH)));
@@ -167,17 +163,19 @@ void PrintPreviewForm::OnPaint() {
 	CRect headerRect = { 0, };
 	CRect footerRect = { 0, };
 	CRect writeRect = this->notepadForm->printer->GetPrintWriteRect();
+	pageLineCount = this->notepadForm->printer->GetPageLineCount();
 	if (header.Compare("") != 0) {
 		writeRect.top += (metric.tmHeight);
 		headerRect.SetRect(printRect.left, printRect.top, printRect.right, writeRect.top);
+		pageLineCount--;
 	}
 	if (footer.Compare("") != 0) {
 		writeRect.bottom -= (metric.tmHeight);
 		footerRect.SetRect(printRect.left, writeRect.bottom, printRect.right, printRect.bottom);
+		pageLineCount--;
 	}
 
 	note = this->notepadForm->printer->GetPrintNote();
-	pageLineCount = this->notepadForm->printer->GetPageLineCount();
 
 	i = (this->m_nCurrentPage - 1) * pageLineCount;
 	totalHeight = writeRect.top;
@@ -210,7 +208,7 @@ void PrintPreviewForm::OnPaint() {
 
 	paintDC.SetStretchBltMode(HALFTONE); // 가로모드 너비 5 높이 8
 	paintDC.StretchBlt(startXPos, startYPos, (Long)(fillRect.Width() / rateWidth), (Long)(fillRect.Height() / rateHeight), &tempDC,
-		fillRect.left, fillRect.top, fillRect.Width(), fillRect.Height(), SRCCOPY);
+		0, 0, fillRect.Width(), fillRect.Height(), SRCCOPY);
 
 	rectPen.CreatePen(PS_SOLID, 2, GetSysColor(COLOR_WINDOWFRAME));
 	shadowPen.CreatePen(PS_SOLID, 3, GetSysColor(COLOR_BTNSHADOW)); // 그림자를 줌.

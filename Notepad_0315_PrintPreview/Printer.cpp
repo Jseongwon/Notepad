@@ -152,8 +152,6 @@ void Printer::Prepare(CWnd *pParentWnd) {
 	columnCount = (LONG)floor(printRect.Width() / aveCharWidth * 1.0 + 0.5);
 
 	printRect.SetRect(0, 0, printSize.cx, printSize.cy);
-	printRect.SetRect(printRect.CenterPoint().x - printSize.cx / 2, printRect.CenterPoint().y - printSize.cy / 2,
-		printRect.CenterPoint().x + printSize.cx / 2, printRect.CenterPoint().y + printSize.cy / 2);
 
 	// 4. 여백을 구한다.
 	rate = (LONG)floor(printSize.cy / paperHeight * 1.0 + 0.5);
@@ -164,10 +162,10 @@ void Printer::Prepare(CWnd *pParentWnd) {
 
 	// 5. 인쇄 용지의 적을 범위를 구한다.
 	printWriteRect = printRect;
-	printWriteRect.left += printMargin.left + 3;
-	printWriteRect.top += printMargin.top + 3;
-	printWriteRect.right -= printMargin.right + 3;
-	printWriteRect.bottom -= printMargin.bottom + 3;
+	printWriteRect.left += printMargin.left;
+	printWriteRect.top += printMargin.top;
+	printWriteRect.right -= printMargin.right;
+	printWriteRect.bottom -= printMargin.bottom;
 
 	dc->SelectObject(oldFont);
 	DeleteObject(hFont);
