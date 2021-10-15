@@ -197,6 +197,13 @@ void PrintPreviewForm::OnPaint() {
 
 	Long startXPos = (Long)(screenRect.CenterPoint().x - fillRect.Width() / rateWidth / 2);
 	Long startYPos = (Long)((screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2);// +this->previewToolBar->size.cy;
+	Long previewWidth = (Long)(fillRect.Width() / rateWidth);
+	Long previewHeight = (Long)(fillRect.Height() / rateHeight);
+	previewHeight = screenRect.Height() - startYPos - this->previewToolBar->size.cy / 2;
+	if (rateWidth > rateHeight) {
+		startXPos = 5;
+		previewWidth = screenRect.Width() - startXPos - 5;
+	}
 
 	paintDC.SelectStockObject(HOLLOW_BRUSH);
 	paintDC.SelectObject(&rectPen);
@@ -207,7 +214,7 @@ void PrintPreviewForm::OnPaint() {
 	paintDC.FillRect(&screenRect, CBrush::FromHandle((HBRUSH)GetStockObject(GRAY_BRUSH)));
 
 	paintDC.SetStretchBltMode(HALFTONE); // 가로모드 너비 5 높이 8
-	paintDC.StretchBlt(startXPos, startYPos, (Long)(fillRect.Width() / rateWidth), (Long)(fillRect.Height() / rateHeight), &tempDC,
+	paintDC.StretchBlt(startXPos, startYPos, previewWidth, previewHeight, &tempDC,
 		0, 0, fillRect.Width(), fillRect.Height(), SRCCOPY);
 
 	rectPen.CreatePen(PS_SOLID, 2, GetSysColor(COLOR_WINDOWFRAME));
