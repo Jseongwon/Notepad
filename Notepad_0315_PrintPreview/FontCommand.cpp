@@ -32,6 +32,7 @@ void FontCommand::Execute() {
 	Long pointSize;
 	LONG noteCurrent;
 	LONG id;
+	dlg.m_cf.rgbColors = this->notepadForm->font->GetColorRef();
 	id = (Long)dlg.DoModal();
 	if (id == IDOK) {
 		dlg.GetCurrentFont(&logFont);

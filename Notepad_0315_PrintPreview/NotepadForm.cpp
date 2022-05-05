@@ -713,6 +713,7 @@ void NotepadForm::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	this->letter[0] = nChar;
 	this->letter[1] = '\0';
 
+	if(!(GetKeyState(VK_SHIFT) & 0x80) && !(GetKeyState(VK_CONTROL) & 0x80))
 	this->SendMessage(WM_COMMAND, IDM_EDIT_CHARACTER);
 
 	this->Notify();
@@ -897,9 +898,11 @@ void NotepadForm::OnPaint() {
 	oldFont = (HFONT)dcTemp.SelectObject(hFont);
 	dcTemp.SetTextColor(this->font->GetColorRef());
 
+	Long startNoteCurrent = this->matrix->GetNoteCurrent(this->scrollController->GetVerticalScroll()->GetCurrent());
+	Long criticalPoint = startNoteCurrent * this->matrix->GetHeight() + this->scrollController->GetVerticalScroll()->GetPage() + this->matrix->GetHeight();
 	Long height = this->matrix->GetHeight();
-	Long i = 0;
-	while (i < this->note->GetLength()) {
+	Long i = startNoteCurrent;
+	while (i < this->note->GetLength() && i * height < criticalPoint) {
 		line = this->note->GetAt(i);
 		text = CString(line->GetString().c_str());
 		dcTemp.TextOut(-this->scrollController->GetHorizontalScroll()->GetCurrent(),

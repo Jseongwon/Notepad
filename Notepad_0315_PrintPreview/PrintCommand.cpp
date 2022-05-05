@@ -36,7 +36,7 @@ void PrintCommand::Execute() {
 	Glyph *note;
 	Glyph *line;
 
-	CRect printRect;
+	CRect printRect = this->notepadForm->printer->GetPrintPageRect();
 
 	Long pageLineCount;
 	Long totalHeight;
@@ -92,19 +92,23 @@ void PrintCommand::Execute() {
 		header = AfxGetApp()->GetProfileString("NotepadSection", "Header", "");
 		footer = AfxGetApp()->GetProfileString("NotepadSection", "Footer", "");
 
+		CRect headerRect;
+		CRect footerRect;
 		CRect writeRect = this->notepadForm->printer->GetPrintWriteRect();
 		pageLineCount = this->notepadForm->printer->GetPageLineCount();
 		if (header.Compare("") != 0) {
 			writeRect.top += (metric.tmHeight);
+			headerRect.SetRect(printRect.left, printRect.top, printRect.right, writeRect.top);
 			pageLineCount--;
 		}
 		if (footer.Compare("") != 0) {
 			writeRect.bottom -= (metric.tmHeight);
+			footerRect.SetRect(printRect.left, writeRect.bottom, printRect.right, printRect.bottom);
 			pageLineCount--;
 		}
 
-		CRect headerRect(0, 0, printRect.Width(), printRect.Height() + (metric.tmHeight));
-		CRect footerRect(0, printRect.Height() - (metric.tmHeight), printRect.Width(), printRect.Height());
+		//(0, 0, printRect.Width(), printRect.Height() + (metric.tmHeight));
+		//(0, printRect.Height() - (metric.tmHeight), printRect.Width(), printRect.Height());
 		cdc->SetMapMode(MM_TEXT);
 
 		//¿Œº‚ Ω√¿€

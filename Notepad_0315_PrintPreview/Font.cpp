@@ -54,6 +54,9 @@ LOGFONT Font::FindPrintingLogFont(CDC* printerDC) {
 
 	CSize iSize = printerDC->GetTextExtent("i");
 
+	TEXTMETRIC metric;
+	printerDC->GetTextMetrics(&metric);
+
 	int iCount = printRect.Width() / iSize.cx;
 	int compareICount = 0;
 

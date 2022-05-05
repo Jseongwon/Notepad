@@ -196,10 +196,10 @@ void PrintPreviewForm::OnPaint() {
 	double rateHeight = m_dcPrint->GetDeviceCaps(VERTSIZE) / 25.4;
 
 	Long startXPos = (Long)(screenRect.CenterPoint().x - fillRect.Width() / rateWidth / 2);
-	Long startYPos = (Long)((screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2);// +this->previewToolBar->size.cy;
+	Long startYPos = this->previewToolBar->size.cy + 5;// (Long)((screenRect.CenterPoint().y + this->previewToolBar->size.cy / 2) - fillRect.Height() / rateHeight / 2);// +this->previewToolBar->size.cy;
 	Long previewWidth = (Long)(fillRect.Width() / rateWidth);
-	Long previewHeight = (Long)(fillRect.Height() / rateHeight);
-	previewHeight = screenRect.Height() - startYPos - this->previewToolBar->size.cy / 2;
+	Long previewHeight = previewHeight = screenRect.Height() - startYPos - 5;// (Long)(fillRect.Height() / rateHeight);
+	//previewHeight = screenRect.Height() - startYPos - this->previewToolBar->size.cy / 2;
 	if (rateWidth > rateHeight) {
 		startXPos = 5;
 		previewWidth = screenRect.Width() - startXPos - 5;

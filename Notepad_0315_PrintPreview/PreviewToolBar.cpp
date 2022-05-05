@@ -112,6 +112,7 @@ void PreviewToolBar::OnPrintButtonClicked() {
 		printHeight = cdc->GetDeviceCaps(VERTRES);
 
 		//폰트 적용
+		//logFont = this->notepadForm->font->FindPrintingLogFont(cdc);
 		logFont = this->printPreviewForm->notepadForm->printer->GetPrintLogFont();
 		font.CreateFontIndirectA(&logFont);
 		TEXTMETRIC metric;
@@ -122,17 +123,23 @@ void PreviewToolBar::OnPrintButtonClicked() {
 		header = AfxGetApp()->GetProfileString("NotepadSection", "Header", "");
 		footer = AfxGetApp()->GetProfileString("NotepadSection", "Footer", "");
 
+		CRect headerRect;
+		CRect footerRect;
 		CRect writeRect = this->printPreviewForm->notepadForm->printer->GetPrintWriteRect();
-
+		pageLineCount = this->printPreviewForm->notepadForm->printer->GetPageLineCount();
 		if (header.Compare("") != 0) {
 			writeRect.top += (metric.tmHeight);
+			headerRect.SetRect(0, 0, printWidth, writeRect.top);
+			pageLineCount--;
 		}
 		if (footer.Compare("") != 0) {
 			writeRect.bottom -= (metric.tmHeight);
+			footerRect.SetRect(0, writeRect.bottom, printWidth, printHeight);
+			pageLineCount--;
 		}
 
-		CRect headerRect(0, 0, printWidth, printHeight + (metric.tmHeight));
-		CRect footerRect(0, printHeight - (metric.tmHeight), printWidth, printHeight);
+		//(0, 0, printRect.Width(), printRect.Height() + (metric.tmHeight));
+		//(0, printRect.Height() - (metric.tmHeight), printRect.Width(), printRect.Height());
 		cdc->SetMapMode(MM_TEXT);
 
 		//인쇄 시작
